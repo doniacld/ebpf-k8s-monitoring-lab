@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: http-monitor
+  namespace: default
+  labels:
+    app: http-monitor
+spec:
+  selector:
+    matchLabels:
+      app: http-monitor
+  template:
+    metadata:
+      labels:
+        app: http-monitor
+      annotations:
+        # TODO 1: Add Prometheus annotations for metrics scraping
+        # Hint: prometheus.io/scrape: "true"
+        # Hint: prometheus.io/port: "9090"
+        # YOUR CODE HERE
+    spec:
+      serviceAccountName: http-monitor
+      hostPID: true  # Required for eBPF tracing
+      hostNetwork: true  # Required to trace host network traffic
+      containers:
+        - name: http-monitor
+          # TODO 2: Specify container image
+          # Hint: Use the image built in the previous challenge
+          # Example: http-monitor:v1.0
+          image: # YOUR CODE HERE
+          imagePullPolicy: Never  # For local images
+          securityContext:
+            privileged: true  # Required for eBPF
+            capabilities:
+              add:
+                - SYS_ADMIN
+                - SYS_RESOURCE
+                - NET_ADMIN
+          ports:
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 100m
+            requests:
+              memory: 100Mi
+              cpu: 50m
+      tolerations:
+        # TODO 3: Add toleration for control-plane nodes
+        # Hint: Tolerate node-role.kubernetes.io/control-plane with NoSchedule effect
+        # This allows the DaemonSet to run on control-plane nodes too
+        # YOUR CODE HERE
