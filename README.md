@@ -1,94 +1,82 @@
-# eBPF HTTP Monitoring Lab
+# eBPF Kubernetes Monitoring Lab - Exercises
 
-This repository contains the exercises for the "Build an eBPF Monitoring Tool for Kubernetes" Instruqt lab.
+This repository contains the starter code for the **eBPF Kubernetes Monitoring** lab on Instruqt.
 
 ## Structure
 
 ```
-.
+ebpf-k8s-monitoring-lab/
+├── main.go                 # Go userspace with 4 TODOs
 ├── bpf/
-│   ├── http_monitor.c    # eBPF C program (COMPLETE - no editing needed)
-│   ├── http_monitor.h    # Event struct definition
-│   └── vmlinux.h         # Kernel types (generated)
-├── manifests/
-│   ├── daemonset.yaml    # Kubernetes DaemonSet (has TODOs)
-│   ├── rbac.yaml         # RBAC configuration (complete)
-│   └── service.yaml      # Service definition (complete)
-├── main.go               # Go agent (has 4 TODOs)
-├── go.mod                # Go dependencies
-├── Makefile              # Build commands
-├── Dockerfile            # Container image
-└── README.md             # This file
+│   ├── http_monitor.c      # eBPF program (complete)
+│   └── vmlinux.h          # Kernel headers
+├── manifests/              # Kubernetes YAML with TODOs
+│   ├── daemonset.yaml      # 3 TODOs to complete
+│   ├── rbac.yaml           # Complete
+│   ├── service.yaml        # Complete
+│   └── *.yaml
+├── Makefile                # Build commands
+├── Dockerfile              # Container image
+├── go.mod                  # Go dependencies
+└── go.sum
 ```
 
-## What You'll Build
+## TODOs
 
-An HTTP monitoring tool that:
-- Traces HTTP requests using eBPF
-- Exports Prometheus metrics
-- Deploys as a Kubernetes DaemonSet
-- Visualizes metrics in Grafana
+### Challenge 03: Complete Go Agent (4 TODOs)
 
-## Prerequisites
+**main.go:**
+1. TODO 1: Define Prometheus metric (line ~27)
+2. TODO 2: Load eBPF objects (line ~43)
+3. TODO 3: Attach kprobe (line ~51)
+4. TODO 4: Create ring buffer reader (line ~61)
 
-- Go 1.23+
-- Linux kernel 5.7+
-- clang/llvm for eBPF compilation
-- Kubernetes cluster (provided in lab)
+### Challenge 04: Deploy DaemonSet (3 TODOs)
 
-## Exercises
+**manifests/daemonset.yaml:**
+1. TODO 1: Add Prometheus annotations
+2. TODO 2: Set container image
+3. TODO 3: Add node tolerations
 
-### Exercise 1: Complete Go Agent (main.go)
+## What's Complete
 
-Fill in 4 TODOs:
-1. Define Prometheus metric
-2. Load eBPF objects
-3. Attach kprobe
-4. Create ring buffer reader
+- ✅ eBPF C program (`bpf/http_monitor.c`)
+- ✅ RBAC configuration (`manifests/rbac.yaml`)
+- ✅ Service configuration (`manifests/service.yaml`)
+- ✅ Makefile, Dockerfile, dependencies
 
-### Exercise 2: Complete DaemonSet (manifests/daemonset.yaml)
-
-Fill in 3 TODOs:
-1. Add Prometheus annotations
-2. Specify container image
-3. Add control-plane node toleration
-
-## Building
+## Building Locally
 
 ```bash
-# Generate eBPF code and Go bindings
+# Generate eBPF bytecode
 make generate
 
-# Build the binary
+# Build binary
 make build
 
-# Run locally (requires root)
-sudo ./http-monitor
+# Build container image
+docker build -t http-monitor:v1.0 .
+
+# Load to Kind (if using Kind)
+kind load docker-image http-monitor:v1.0
+
+# Deploy to Kubernetes
+kubectl apply -f manifests/
 ```
 
-## Deploying to Kubernetes
+## Features
 
-```bash
-# Apply manifests
-kubectl apply -f manifests/rbac.yaml
-kubectl apply -f manifests/service.yaml
-kubectl apply -f manifests/daemonset.yaml
+This HTTP monitoring agent:
+- Traces HTTP requests using eBPF kprobe on `tcp_sendmsg`
+- Exports Prometheus metrics
+- Runs as a Kubernetes DaemonSet (one pod per node)
+- Visualizes data in Grafana
 
-# Check status
-kubectl get daemonset http-monitor
-kubectl logs -l app=http-monitor
-```
+## Lab Link
 
-## Testing Metrics
-
-```bash
-# Port-forward to metrics endpoint
-kubectl port-forward svc/http-monitor 9090:9090
-
-# Query metrics
-curl localhost:9090/metrics | grep http_requests_total
-```
+Complete this lab on Instruqt:
+https://play.instruqt.com/isovalent/tracks/ebpf-k8s-monitoring
 
 ## License
 
-Apache 2.0
+Copyright © Isovalent

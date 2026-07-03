@@ -15,23 +15,19 @@ spec:
       labels:
         app: http-monitor
       annotations:
-        # TODO 1: Add Prometheus annotations for metrics scraping
-        # Hint: prometheus.io/scrape: "true"
-        # Hint: prometheus.io/port: "9090"
-        # YOUR CODE HERE
+        # TODO 1: Add Prometheus scrape annotations here
+        # Hint: prometheus.io/scrape: "true" and prometheus.io/port: "9090"
     spec:
       serviceAccountName: http-monitor
-      hostPID: true  # Required for eBPF tracing
-      hostNetwork: true  # Required to trace host network traffic
+      hostPID: true
+      hostNetwork: true
       containers:
         - name: http-monitor
-          # TODO 2: Specify container image
-          # Hint: Use the image built in the previous challenge
-          # Example: http-monitor:v1.0
-          image: # YOUR CODE HERE
-          imagePullPolicy: Never  # For local images
+          # TODO 2: Set image to http-monitor:v1.0
+          image: YOUR_IMAGE_HERE
+          imagePullPolicy: Never
           securityContext:
-            privileged: true  # Required for eBPF
+            privileged: true
             capabilities:
               add:
                 - SYS_ADMIN
@@ -48,8 +44,21 @@ spec:
             requests:
               memory: 100Mi
               cpu: 50m
-      tolerations:
-        # TODO 3: Add toleration for control-plane nodes
-        # Hint: Tolerate node-role.kubernetes.io/control-plane with NoSchedule effect
-        # This allows the DaemonSet to run on control-plane nodes too
-        # YOUR CODE HERE
+          volumeMounts:
+            - name: proc
+              mountPath: /proc
+              readOnly: true
+            - name: kubelet-pods
+              mountPath: /var/lib/kubelet/pods
+              readOnly: true
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+            type: Directory
+        - name: kubelet-pods
+          hostPath:
+            path: /var/lib/kubelet/pods
+            type: Directory
+      # TODO 3: Add tolerations for control-plane nodes
+      # Hint: key: node-role.kubernetes.io/control-plane
