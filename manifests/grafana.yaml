@@ -1,3 +1,19 @@
+# ============================================================================
+# REFERENCE ONLY — the Instruqt lab does NOT apply this file.
+#
+# In the lab, Grafana + Prometheus are provided by the sandbox's
+# kube-prometheus-stack (namespace: monitoring, Grafana at NodePort 32042),
+# started in challenge 01. This manifest is a standalone, self-contained
+# alternative you can apply yourself to run the same dashboard without that
+# stack:
+#
+#   kubectl apply -f manifests/prometheus.yaml
+#   kubectl apply -f manifests/grafana.yaml
+#   # Grafana: http://<node-ip>:30000  (anonymous admin, dashboard uid http-monitor)
+#
+# It deploys a minimal Grafana (anonymous auth, port 3000, NodePort 30000) and
+# Prometheus in the `default` namespace, scraping the http-monitor Service.
+# ============================================================================
 ---
 apiVersion: v1
 kind: ConfigMap

@@ -1,3 +1,13 @@
+# ============================================================================
+# REFERENCE ONLY — the Instruqt lab does NOT apply this file.
+#
+# In the lab, Prometheus is provided by the sandbox's kube-prometheus-stack
+# (namespace: monitoring), started in challenge 01. This manifest is a
+# standalone Prometheus (namespace: default) that scrapes the http-monitor
+# Service — apply it together with manifests/grafana.yaml if you want to run the
+# monitoring stack yourself without the sandbox's stack. See grafana.yaml for
+# the full apply instructions.
+# ============================================================================
 ---
 apiVersion: v1
 kind: ConfigMap
