@@ -15,7 +15,7 @@ spec:
       labels:
         app: http-monitor
       annotations:
-        # TODO 1: Add Prometheus scrape annotations here
+        # Exercise 1: Add Prometheus scrape annotations here
         # Hint: prometheus.io/scrape: "true" and prometheus.io/port: "9090"
     spec:
       serviceAccountName: http-monitor
@@ -23,7 +23,7 @@ spec:
       hostNetwork: true
       containers:
         - name: http-monitor
-          # TODO 2: Set image to http-monitor:v1.0
+          # Exercise 2: Set image to http-monitor:v1.0
           image: YOUR_IMAGE_HERE
           imagePullPolicy: Never
           securityContext:
@@ -74,5 +74,5 @@ spec:
           hostPath:
             path: /var/lib/kubelet/pods
             type: Directory
-      # TODO 3: Add tolerations for control-plane nodes
+      # Exercise 3: Add tolerations for control-plane nodes
       # Hint: key: node-role.kubernetes.io/control-plane
