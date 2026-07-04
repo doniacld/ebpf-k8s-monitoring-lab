@@ -17,7 +17,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -type http_event -target native httpMonitor ./bpf/http_monitor.c -- -I./bpf
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -type http_event -target amd64,arm64 httpMonitor ./bpf/http_monitor.c -- -I./bpf
 
 // TODO 1: Define Prometheus metric
 // Hint: Use prometheus.NewCounterVec with labels: method, path, comm
