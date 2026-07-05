@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-monitor
+  namespace: default
+  labels:
+    app: http-monitor
+spec:
+  selector:
+    app: http-monitor
+  ports:
+    - name: metrics
+      port: 9090
+      targetPort: 9090
+      protocol: TCP
+  type: ClusterIP

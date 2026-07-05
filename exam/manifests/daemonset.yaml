@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: http-monitor
+  namespace: default
+  labels:
+    app: http-monitor
+spec:
+  selector:
+    matchLabels:
+      app: http-monitor
+  template:
+    metadata:
+      labels:
+        app: http-monitor
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+    spec:
+      serviceAccountName: http-monitor
+      hostPID: true
+      hostNetwork: true
+      containers:
+        - name: http-monitor
+          image: http-monitor:v1.0
+          imagePullPolicy: Never
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - SYS_ADMIN
+                - SYS_RESOURCE
+                - NET_ADMIN
+          ports:
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          # Gate readiness on the metrics endpoint actually serving. Without
+          # this, numberReady (and `kubectl rollout status`) flips to Ready the
+          # instant the container process starts — before the eBPF program is
+          # attached and the ring-buffer reader loop is consuming events — so a
+          # check that scrapes right after rollout can race an agent that is
+          # "Ready" but not yet observing traffic.
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9090
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 100m
+            requests:
+              memory: 100Mi
+              cpu: 50m
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
